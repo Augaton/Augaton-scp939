@@ -1,7 +1,12 @@
-SWEP.Category               = "SCP-939 SWEP"
+AddCSLuaFile()
+if not scp049 then scp049 = {} end
+local scp939 = guthscp.modules.scp939
+local config939 = guthscp.configs.scp939
+
+SWEP.Category               = "GuthSCP"
 SWEP.PrintName              = "SCP-939"        
 SWEP.Author                 = "Matius"
-SWEP.Instructions           = "Working 939 Swep"
+SWEP.Instructions           = "Guthen SCP 939 !"
 SWEP.ViewModelFOV           = 56
 SWEP.Spawnable              = true
 SWEP.AdminOnly              = false
@@ -40,13 +45,23 @@ function SWEP:PrimaryAttack()
     self:EmitSound('weapons/scp939/bite.wav')
 end
 
+// weapons/scp939/
+
+SWEP.NextSecondaryAttack = 0
 
 function SWEP:SecondaryAttack()
+	if not SERVER then return end
 
-    local ply = self.Owner
-    if not ply:Alive() then return end
+	local ply = self:GetOwner()
+    -- Play random sound
+    local sounds = config939.random_sound
+    if #sounds == 0 then return end
 
-    self:EmitSound("weapons/scp939/" .. Voice[math.random(1, #Voice)])
-    self:SetNextSecondaryFire(CurTime() + 3)
+    ply:EmitSound(sounds[math.random(#sounds)], nil, nil)
 
+	self:SetNextSecondaryFire( CurTime() + 5.0 )
+end
+
+if CLIENT then
+    guthscp.spawnmenu.add_weapon(SWEP, "SCP-939 SWEP")
 end

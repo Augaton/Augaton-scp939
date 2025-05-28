@@ -1,9 +1,9 @@
 include("shared.lua")
 local tab = {
-	["$pp_colour_addr"] = -0.5,
-	["$pp_colour_addg"] = -0.5,
-	["$pp_colour_addb"] = -0.5,
-	["$pp_colour_brightness"] = 1,
+	["$pp_colour_addr"] = 0,
+	["$pp_colour_addg"] = 0,
+	["$pp_colour_addb"] = 0,
+	["$pp_colour_brightness"] = 0.1,
 	["$pp_colour_contrast"] = 1,
 	["$pp_colour_colour"] = 0,
 	["$pp_colour_mulr"] = 0,
@@ -51,12 +51,12 @@ function SWEP:Think()
                     end
                         if v:IsPlayer() && v != LocalPlayer() then
                         if v:GetVelocity():Length() > 0 && !v:Crouching() || v:IsSpeaking() || v.IsAttacker == true then
-                                v:SetNoDraw(false)
-                                local weapon = v:GetActiveWeapon()
-                                weapon:SetNoDraw(false)
-                                v:SetMaterial('vision/living')
-                                end
+                            v:SetNoDraw(false)
+                            local weapon = v:GetActiveWeapon()
+                            weapon:SetNoDraw(false)
+                            v:SetMaterial('vision/living')
                             end
+                        end
                 end
             end
         end)
