@@ -66,6 +66,85 @@ function SWEP:SecondaryAttack()
 	self:SetNextSecondaryFire( CurTime() + 5.0 )
 end
 
+function SWEP:Holster()
+    local ply = self:GetOwner()
+    if IsValid(ply) then
+        ply.silent_step = false
+    end
+    return true
+end
+
+function SWEP:Initialize()
+    self:SetHoldType("normal")
+    self.NextSilentUse = 0
+end
+
+function SWEP:Reload()
+
+    if not scp939_silentability then return end
+
+    local ply = self:GetOwner()
+
+    if not self.NextSilentUse then return end
+    if not IsValid(ply) then return end
+
+    if self.NextSilentUse and CurTime() < self.NextSilentUse then
+        return 
+    end
+
+    ply.silent_step = true
+    self.NextSilentUse = CurTime() + config939.scp939_silentabilitycooldown
+    self.SilentEndTime = CurTime() + config939.scp939_silentabilityduration
+
+    if SERVER then
+        guthscp.player_message( ply, "Silent Step active for " .. config939.scp939_silentabilityduration .. " seconds." )
+    end
+
+    timer.Simple(config939.scp939_silentabilityduration, function()
+        if IsValid(ply) then
+            ply.silent_step = false
+            if SERVER then
+                guthscp.player_message(ply, "Silent Step over.")
+            end
+        end
+    end)
+end
+
+hook.Add("HUDPaint", "SCP939_SilentAbilityHUD", function()
+    if not scp939_silentability then return end
+
+    local ply = LocalPlayer()
+    local wep = ply:GetActiveWeapon()
+
+    if not scp939.is_scp_939(ply) then return end
+
+    local text = ""
+    local color = Color(255, 50, 50)
+
+    if ply.silent_step and wep.SilentEndTime then
+        local remaining = math.max(0, wep.SilentEndTime - CurTime())
+        text = "Silent Step Active : " .. string.format("%.1f", remaining) .. "s"
+    elseif wep.NextSilentUse and CurTime() < wep.NextSilentUse then
+        local cd = wep.NextSilentUse - CurTime()
+        text = "Cooldown : " .. string.format("%.1f", cd) .. "s"
+    else
+        text = "Silent Step Ready"
+        color = Color(50, 255, 50)
+    end
+
+    surface.SetFont("Trebuchet24")
+    local textWidth, textHeight = surface.GetTextSize(text)
+
+    local x = ScrW() * 0.5 - (textWidth / 2)
+    local y = ScrH() * 0.85
+
+    surface.SetTextColor(color)
+    surface.SetTextPos(x, y)
+    surface.DrawText(text)
+end)
+
+
+
 if CLIENT then
     guthscp.spawnmenu.add_weapon(SWEP, "SCP-939 SWEP")
 end

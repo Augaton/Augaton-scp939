@@ -65,6 +65,27 @@ MODULE.menu = {
 				desc = "The range of detection of SCP 939, in hammer units",
 				default = 2500,
 			},
+			{
+				type = "Bool",
+				name = "Silent Step Ability",
+				id = "scp939_silentability",
+				desc = "If checked, SCP-939 can use a ability that's called Silent Step using your reload button",
+				default = false,
+			},
+			{
+				type = "Number",
+				name = "Silent Step Duration",
+				id = "scp939_silentabilityduration",
+				desc = "The duration of the ability of SCP 939 Silent Step",
+				default = 5,
+			},
+			{
+				type = "Number",
+				name = "Silent Step Cooldown",
+				id = "scp939_silentabilitycooldown",
+				desc = "The cooldown of the ability of SCP 939 Silent Step before reusing it",
+				default = 20,
+			},
 			"Sounds",
 			{
 				type = "String",

@@ -29,3 +29,16 @@ function scp939.is_scp_939(ply)
     end
     return scp939.filter:is_in(ply)
 end
+
+hook.Add("PlayerDeath", "SCP939SilentReset", function(ply)
+    if ply.silent_step then
+        ply.silent_step = false
+    end
+end)
+
+hook.Add("PlayerFootstep", "SCP939SilentStep", function(ply, pos, foot, sound, volume, rf)
+    if scp939.is_scp_939(ply) and ply.silent_step then
+        return true -- annule le son de pas
+    end
+end)
+
