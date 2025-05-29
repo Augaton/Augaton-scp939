@@ -193,14 +193,19 @@ function SWEP:Think()
             for k, v in pairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
                 if v:IsPlayer() && v:IsValid() && ply:Alive() && v:Alive() && v != ply then
                     if v:IsPlayer() && v != ply then
-                        if scp939.shouldrevealplayer(ply,v) and v:Alive() then
+                        if scp939.shouldrevealplayer(ply,v) then
                             v:SetNoDraw(false)
                             local weapon = v:GetActiveWeapon()
-                            weapon:SetNoDraw(false)
+
+                            if weapon then
+                                weapon:SetNoDraw(false)
+                            end
+
                             v:SetMaterial('vision/living')
 
+                            if not config939.scp939_visualping then return end
+
                             if SERVER then
-                                if not config939.scp939_visualping then return end
                                 if self.NextPing and CurTime() > self.NextPing then
                                     self.NextPing = CurTime() + cdping
                                     net.Start("scp939_sound_ping")
@@ -212,9 +217,11 @@ function SWEP:Think()
                         else
                             v:SetNoDraw(true)
                             local weapon = v:GetActiveWeapon()
+
                             if weapon then
                                 weapon:SetNoDraw(true)
                             end
+
                             v:SetMaterial('')
                         end
                     end
