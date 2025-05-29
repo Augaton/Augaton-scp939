@@ -74,18 +74,16 @@ MODULE.menu = {
 				default = "weapons/scp939/bite.wav",
 			},
 			{
-				{
-					type = "String[]",
-					name = "Random Sounds",
-					id = "random_sound",
-					desc = "Random-sound played by SCP 939 when imiting sound",
-					default = {
-						"weapons/scp939/talk1.mp3",
-						"weapons/scp939/talk2.mp3",
-						"weapons/scp939/talk3.mp3",
-						"weapons/scp939/talk4.mp3",
-						"weapons/scp939/talk5.mp3",
-					},
+				type = "String[]",
+				name = "Random Sounds",
+				id = "random_sound",
+				desc = "Random-sound played by SCP 939 when imiting sound",
+				default = {
+					"weapons/scp939/talk1.mp3",
+					"weapons/scp939/talk2.mp3",
+					"weapons/scp939/talk3.mp3",
+					"weapons/scp939/talk4.mp3",
+					"weapons/scp939/talk5.mp3",
 				},
 			},
 		},
