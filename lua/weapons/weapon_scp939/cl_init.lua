@@ -1,4 +1,8 @@
 include("shared.lua")
+
+local scp939 = guthscp.modules.scp939
+local config939 = guthscp.configs.scp939
+
 local tab = {
 	["$pp_colour_addr"] = 0,
 	["$pp_colour_addg"] = 0,
@@ -11,21 +15,22 @@ local tab = {
 	["$pp_colour_mulb"] = 0.2
 }
 net.Receive('PlayerShooting', function()
-entity = net.ReadEntity()
-if entity.IsAttacker == true then return end
-entity.IsAttacker = true
-timer.Create('RemoveAttacker', 5, 1, function()
-entity.IsAttacker = false
-end)
+    entity = net.ReadEntity()
+    if entity.IsAttacker == true then return end
+    entity.IsAttacker = true
+    timer.Create('RemoveAttacker', 5, 1, function()
+        entity.IsAttacker = false
+    end)
 end)
 
 function SWEP:Think()
         hook.Add("Think", "SCP939NoDraw", function()
         local wep = LocalPlayer():GetActiveWeapon()
-        if !IsValid( wep ) || wep:GetClass() != 'weapon_scp939' then hook.Remove("Think", "SCP939NoDraw") end
+        local ply = LocalPlayer()
+        if !IsValid( wep ) || not scp939.is_scp_939(ply) then hook.Remove("Think", "SCP939NoDraw") end
             hook.Add("RenderScreenspaceEffects", "PostProcess939", function()
             local wep = LocalPlayer():GetActiveWeapon()
-            if !IsValid( wep ) || wep:GetClass() != 'weapon_scp939' then
+            if !IsValid( wep ) || not scp939.is_scp_939(ply) then
                 for k, v in pairs(player.GetAll()) do
                 v:SetNoDraw(false)
                 v:SetMaterial("") 

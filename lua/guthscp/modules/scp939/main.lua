@@ -1,16 +1,17 @@
 local MODULE = {
 	name = "SCP-939",
 	author = "Augaton",
-	version = "0.0.1",
+	version = "0.0.2",
 	description = [[Control SCP 939, control what he do !]],
-	icon = "icon16/key.png",
+	icon = "icon16/sound_mute.png",
 	version_url = "https://raw.githubusercontent.com/Augaton/guthscp939/refs/heads/main/lua/guthscp/modules/scp939/main.lua",
 	dependencies = {
 		base = "2.4.0",
         guthscpkeycard = "2.1.6",
 	},
 	requires = {
-		-- ["server.lua"] = guthscp.REALMS.SERVER,
+	 	["server.lua"] = guthscp.REALMS.SERVER,
+		["shared.lua"] = guthscp.REALMS.SHARED,
 	},
 }
 
@@ -34,6 +35,27 @@ MODULE.menu = {
 				is_disabled = function( self, numwang )
 					return guthscp.modules.guthscpkeycard == nil
 				end,
+			},
+			{
+				type = "Bool",
+				name = "Immortal",
+				id = "scp939_immortal",
+				desc = "If checked, SCP-939 can't take damage",
+				default = false,
+			},
+			{
+				type = "Number",
+				name = "Walk Speed",
+				id = "walk_speed",
+				desc = "Speed of walking for SCP-939, in hammer units",
+				default = 150,
+			},
+			{
+				type = "Number",
+				name = "Run Speed",
+				id = "run_speed",
+				desc = "Speed of running for SCP-939, in hammer units",
+				default = 210,
 			},
 			"Sounds",
 			{

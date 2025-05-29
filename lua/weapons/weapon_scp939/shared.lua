@@ -1,5 +1,5 @@
 AddCSLuaFile()
-if not scp049 then scp049 = {} end
+if not scp939 then scp939 = {} end
 local scp939 = guthscp.modules.scp939
 local config939 = guthscp.configs.scp939
 
@@ -46,6 +46,10 @@ function SWEP:PrimaryAttack()
 end
 
 // weapons/scp939/
+
+if SERVER then
+    util.AddNetworkString("scp939_sound_detection")
+end
 
 SWEP.NextSecondaryAttack = 0
 
