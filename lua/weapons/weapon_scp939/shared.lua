@@ -81,7 +81,7 @@ end
 
 function SWEP:Reload()
 
-    if not scp939_silentability then return end
+    if not config939.scp939_silentability then return end
 
     local ply = self:GetOwner()
 
@@ -100,9 +100,18 @@ function SWEP:Reload()
         guthscp.player_message( ply, "Silent Step active for " .. config939.scp939_silentabilityduration .. " seconds." )
     end
 
+    ply:SetSlowWalkSpeed( config939.walk_speed * config939.scp939_silentstepboost )
+	ply:SetWalkSpeed( config939.walk_speed * config939.scp939_silentstepboost )
+	ply:SetRunSpeed( config939.run_speed * config939.scp939_silentstepboost )
+
     timer.Simple(config939.scp939_silentabilityduration, function()
         if IsValid(ply) then
             ply.silent_step = false
+
+            ply:SetSlowWalkSpeed( config939.walk_speed )
+            ply:SetWalkSpeed( config939.walk_speed )
+            ply:SetRunSpeed( config939.run_speed )
+
             if SERVER then
                 guthscp.player_message(ply, "Silent Step over.")
             end
@@ -111,7 +120,7 @@ function SWEP:Reload()
 end
 
 hook.Add("HUDPaint", "SCP939_SilentAbilityHUD", function()
-    if not scp939_silentability then return end
+    if not config939.scp939_silentability then return end
 
     local ply = LocalPlayer()
     local wep = ply:GetActiveWeapon()

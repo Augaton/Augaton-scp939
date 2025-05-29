@@ -86,6 +86,13 @@ MODULE.menu = {
 				desc = "The cooldown of the ability of SCP 939 Silent Step before reusing it",
 				default = 20,
 			},
+			{
+				type = "Number",
+				name = "Silent Step Boost",
+				id = "scp939_silentstepboost",
+				desc = "The boost of the movement give to SCP 939 during Silent Step (below 1 is slowing, 1 is unchanged, more than 1 is boosting)",
+				default = 1.5,
+			},
 			"Sounds",
 			{
 				type = "String",
