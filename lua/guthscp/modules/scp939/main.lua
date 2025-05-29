@@ -57,19 +57,34 @@ MODULE.menu = {
 				desc = "Speed of running for SCP-939, in hammer units",
 				default = 210,
 			},
+			"939 System",
+			{
+				type = "Number",
+				name = "Range",
+				id = "range_detection",
+				desc = "The range of detection of SCP 939, in hammer units",
+				default = 2500,
+			},
 			"Sounds",
+			{
+				type = "String",
+				name = "Biting Sound",
+				id = "bitting_sound",
+				desc = "Sound played by SCP 939 when attacking",
+				default = "weapons/scp939/bite.wav",
+			},
 			{
 				{
 					type = "String[]",
 					name = "Random Sounds",
 					id = "random_sound",
-					desc = "Random-sound played by SCP 939",
+					desc = "Random-sound played by SCP 939 when imiting sound",
 					default = {
 						"weapons/scp939/talk1.mp3",
 						"weapons/scp939/talk2.mp3",
 						"weapons/scp939/talk3.mp3",
 						"weapons/scp939/talk4.mp3",
-                        "weapons/scp939/talk5.mp3",
+						"weapons/scp939/talk5.mp3",
 					},
 				},
 			},
@@ -104,5 +119,5 @@ function MODULE:init()
     MODULE:info("The SCP 939 has been loaded !")
 end
 
--- guthscp.module.hot_reload( "hdevicereloaded" )
+guthscp.module.hot_reload( "scp939" )
 return MODULE

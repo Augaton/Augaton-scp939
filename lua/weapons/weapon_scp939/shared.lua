@@ -42,7 +42,7 @@ function SWEP:Deploy() self:SetHoldType( "normal" ) end
 
 function SWEP:PrimaryAttack()
     self.Weapon:SetNextPrimaryFire( CurTime() + 1 )
-    self:EmitSound('weapons/scp939/bite.wav')
+    self:EmitSound(config939.bitting_sound)
 end
 
 // weapons/scp939/
