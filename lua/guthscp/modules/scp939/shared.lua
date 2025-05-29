@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 local scp939 = guthscp.modules.scp939
 local config939 = guthscp.configs.scp939
 scp939 = scp939 or {}
@@ -30,6 +32,8 @@ function scp939.is_scp_939(ply)
     return scp939.filter:is_in(ply)
 end
 
+// Silent Ability
+
 hook.Add("PlayerDeath", "SCP939SilentReset", function(ply)
     if ply.silent_step then
         ply.silent_step = false
@@ -42,3 +46,68 @@ hook.Add("PlayerFootstep", "SCP939SilentStep", function(ply, pos, foot, sound, v
     end
 end)
 
+// Ping
+
+local pings = {}
+
+net.Receive("scp939_sound_ping", function()
+    local pos = net.ReadVector()
+    table.insert(pings, {
+        pos = pos,
+        time = CurTime(),
+        duration = 0.5,     
+    })
+end)
+
+if SERVER then
+    util.AddNetworkString("scp939_sound_ping")
+end
+
+hook.Add("HUDPaint", "SCP939_VisualPing", function()
+    local ply = LocalPlayer()
+    if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
+
+    local eyePos = ply:EyePos()
+    local eyeAngles = ply:EyeAngles()
+
+    for i = #pings, 1, -1 do
+        local ping = pings[i]
+        local delta = CurTime() - ping.time
+
+        if delta > ping.duration then
+            table.remove(pings, i)
+        else
+            local dir = (ping.pos - eyePos):GetNormalized()
+            local angleToPing = eyeAngles:Forward():Dot(dir)
+            local screenPos = ping.pos:ToScreen()
+
+            local t = delta / ping.duration
+            local radius = Lerp(t, 0, 70)
+            local alpha = Lerp(1 - t, 255, 0)
+
+            surface.SetDrawColor(255, 50, 50, alpha)
+            draw.NoTexture()
+            surface.DrawCircle(screenPos.x, screenPos.y, radius, 255, 50, 50)
+        end
+    end
+end)
+
+// init 939
+
+function scp939.shouldrevealplayer(ply, target)
+    if not IsValid(target) or not target:IsPlayer() or not target:Alive() then return false end
+    if target == ply then return false end
+    if not IsValid(ply:GetActiveWeapon()) then return false end
+    if not scp939 or not scp939.is_scp_939 or not scp939.is_scp_939(ply) then return false end
+
+    return (target:GetVelocity():Length() > 0 and not target:Crouching()) or target:IsSpeaking() or target.IsAttacker == true
+end
+
+net.Receive('PlayerShooting', function()
+    entity = net.ReadEntity()
+    if entity.IsAttacker == true then return end
+    entity.IsAttacker = true
+    timer.Create('RemoveAttacker', 5, 1, function()
+        entity.IsAttacker = false
+    end)
+end)

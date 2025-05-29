@@ -3,6 +3,19 @@ if not scp939 then scp939 = {} end
 local scp939 = guthscp.modules.scp939
 local config939 = guthscp.configs.scp939
 
+local tab = {
+	["$pp_colour_addr"] = 0,
+	["$pp_colour_addg"] = 0,
+	["$pp_colour_addb"] = 0,
+	["$pp_colour_brightness"] = 0.1,
+	["$pp_colour_contrast"] = 0.5,
+	["$pp_colour_colour"] = 0,
+	["$pp_colour_mulr"] = 0,
+	["$pp_colour_mulg"] = 0.2,
+	["$pp_colour_mulb"] = 0.2
+}
+
+
 SWEP.Category               = "GuthSCP"
 SWEP.PrintName              = "SCP-939"        
 SWEP.Author                 = "Matius"
@@ -151,6 +164,84 @@ hook.Add("HUDPaint", "SCP939_SilentAbilityHUD", function()
     surface.SetTextPos(x, y)
     surface.DrawText(text)
 end)
+
+local cdping = 1
+function SWEP:Think()
+    hook.Add("Think", "SCP939NoDraw", function()
+            local wep = self:GetOwner():GetActiveWeapon()
+            local ply = self:GetOwner()
+
+            if !IsValid( wep ) || not scp939.is_scp_939(ply) then hook.Remove("Think", "SCP939NoDraw") end
+
+            hook.Add("RenderScreenspaceEffects", "PostProcess939", function()
+                local wep = ply:GetActiveWeapon()
+                if !IsValid( wep ) || not scp939.is_scp_939(ply) then
+                    for k, v in pairs(player.GetAll()) do
+                        v:SetNoDraw(false)
+                        v:SetMaterial("") 
+                        if v:Alive() && IsValid(v:GetActiveWeapon()) then
+                            v:GetActiveWeapon():SetNoDraw(false)
+                        end
+                    end
+                    hook.Remove("RenderScreenspaceEffects", "PostProcess939")
+                else
+                    DrawColorModify( tab )
+                    DrawSobel( 0.2 )
+                end
+            end)
+
+            for k, v in pairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
+                if v:IsPlayer() && v:IsValid() && ply:Alive() && v:Alive() && v != ply then
+                    if v:IsPlayer() && v != ply then
+                        if scp939.shouldrevealplayer(ply,v) and v:Alive() then
+                            v:SetNoDraw(false)
+                            local weapon = v:GetActiveWeapon()
+                            weapon:SetNoDraw(false)
+                            v:SetMaterial('vision/living')
+
+                            if SERVER then
+                                if not config939.scp939_visualping then return end
+                                if self.NextPing and CurTime() > self.NextPing then
+                                    self.NextPing = CurTime() + cdping
+                                    net.Start("scp939_sound_ping")
+                                    net.WriteVector(v:GetShootPos() + Vector(0,0,-5))
+                                    net.Send(ply)
+                                end
+                            end
+
+                        else
+                            v:SetNoDraw(true)
+                            local weapon = v:GetActiveWeapon()
+                            if weapon then
+                                weapon:SetNoDraw(true)
+                            end
+                            v:SetMaterial('')
+                        end
+                    end
+                end
+            end
+        end)
+    end
+
+hook.Add("PostDrawTranslucentRenderables", "DrawPlayersThroughWalls", function()
+    local ply = LocalPlayer()
+    for _, v in pairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
+        if v:IsPlayer() && v:IsValid() && LocalPlayer():Alive() && v:Alive() && v != LocalPlayer() then
+            if scp939.shouldrevealplayer(ply,v) then
+                cam.IgnoreZ(true)
+                    render.SetColorModulation(1, 1, 1) 
+                    render.SetBlend(1)
+                    v:DrawModel()
+                cam.IgnoreZ(false)
+
+                render.SetColorModulation(1, 1, 1)
+                render.SetBlend(1)
+            end
+        end
+    end
+end)
+
+
 
 
 

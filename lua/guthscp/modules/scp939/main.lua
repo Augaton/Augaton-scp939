@@ -67,6 +67,13 @@ MODULE.menu = {
 			},
 			{
 				type = "Bool",
+				name = "Visual Ping",
+				id = "scp939_visualping",
+				desc = "If checked, SCP-939 can see the person and a red circle that's indicate a 'ping', it's purely visual (expiremental, can provoke freeze)",
+				default = false,
+			},
+			{
+				type = "Bool",
 				name = "Silent Step Ability",
 				id = "scp939_silentability",
 				desc = "If checked, SCP-939 can use a ability that's called Silent Step using your reload button",
