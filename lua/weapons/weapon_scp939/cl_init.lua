@@ -60,7 +60,7 @@ function SWEP:Think()
         for k, v in pairs(ents.FindInSphere(LocalPlayer():GetPos(), config939.range_detection)) do
             if v:IsPlayer() && v:IsValid() && LocalPlayer():Alive() && v:Alive() && v != LocalPlayer() then
                 if v:IsPlayer() && v != LocalPlayer() then
-                    if ShouldRevealPlayer(ply,v) then
+                    if ShouldRevealPlayer(ply,v) and v:Alive() then
                         v:SetNoDraw(false)
                         local weapon = v:GetActiveWeapon()
                         weapon:SetNoDraw(false)
@@ -68,7 +68,9 @@ function SWEP:Think()
                     else
                         v:SetNoDraw(true)
                         local weapon = v:GetActiveWeapon()
-                        weapon:SetNoDraw(true)
+                        if weapon then
+                            weapon:SetNoDraw(true)
+                        end
                         v:SetMaterial('')
                     end
                 end
@@ -83,8 +85,8 @@ hook.Add("PostDrawTranslucentRenderables", "DrawPlayersThroughWalls", function()
         if v:IsPlayer() && v:IsValid() && LocalPlayer():Alive() && v:Alive() && v != LocalPlayer() then
             if ShouldRevealPlayer(ply,v) then
                 cam.IgnoreZ(true)
-                    render.SetColorModulation(1, 0, 0) 
-                    render.SetBlend(0.5)
+                    render.SetColorModulation(1, 1, 1) 
+                    render.SetBlend(1)
                     v:DrawModel()
                 cam.IgnoreZ(false)
 
