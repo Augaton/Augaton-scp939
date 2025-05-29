@@ -124,10 +124,21 @@ MODULE.menu = {
 			"Sounds",
 			{
 				type = "String",
-				name = "Biting Sound",
-				id = "bitting_sound",
+				name = "Claw Attack Sound",
+				id = "claw_sound",
 				desc = "Sound played by SCP 939 when attacking",
-				default = "weapons/scp939/bite.wav",
+				default = "weapons/scp939/claw.mp3",
+			},
+			{
+				type = "String[]",
+				name = "Claw Attack Hit Sound",
+				id = "clawhitting_sound",
+				desc = "Random-sound played by SCP 939 when hitting somebody",
+				default = {
+					"weapons/scp939/clawhit1.mp3",
+					"weapons/scp939/clawhit2.mp3",
+					"weapons/scp939/clawhit3.mp3",
+				},
 			},
 			{
 				type = "String[]",
@@ -159,7 +170,7 @@ MODULE.menu = {
 		{
 			text = "Steam",
 			icon = "guthscp/icons/steam.png",
-			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3302753364"
+			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3489863065"
 		},
 		{
 			text = "Discord",

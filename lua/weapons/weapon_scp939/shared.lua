@@ -55,7 +55,6 @@ function SWEP:Deploy() self:SetHoldType( "normal" ) end
 
 function SWEP:PrimaryAttack()
     self.Weapon:SetNextPrimaryFire( CurTime() + 1 )
-    self:EmitSound(config939.bitting_sound)
 end
 
 // weapons/scp939/
@@ -113,6 +112,8 @@ function SWEP:Reload()
         guthscp.player_message( ply, "Silent Step active for " .. config939.scp939_silentabilityduration .. " seconds." )
     end
 
+    ply:EmitSound( "weapons/scp939/silentstep.mp3" )
+
     ply:SetSlowWalkSpeed( config939.walk_speed * config939.scp939_silentstepboost )
 	ply:SetWalkSpeed( config939.walk_speed * config939.scp939_silentstepboost )
 	ply:SetRunSpeed( config939.run_speed * config939.scp939_silentstepboost )
@@ -124,6 +125,8 @@ function SWEP:Reload()
             ply:SetSlowWalkSpeed( config939.walk_speed )
             ply:SetWalkSpeed( config939.walk_speed )
             ply:SetRunSpeed( config939.run_speed )
+
+            ply:EmitSound( "weapons/scp939/silentstep.mp3" )
 
             if SERVER then
                 guthscp.player_message(ply, "Silent Step over.")

@@ -15,7 +15,7 @@ function SWEP:PrimaryAttack()
     if not IsValid(owner) then return end
 
     owner:SetAnimation(PLAYER_ATTACK1)
-    self:EmitSound("")
+    owner:EmitSound(config939.claw_sound)
 
     local attackRange = config939.attack_range
     local attackAngle = math.cos(math.rad(60)) -- cône de 120° au total (60° de chaque côté)
@@ -29,6 +29,12 @@ function SWEP:PrimaryAttack()
 
             local dirToEnt = (ent:GetPos() + ent:OBBCenter() - shootPos):GetNormalized()
             local dot = aimDir:Dot(dirToEnt)
+
+            local ply = self:GetOwner()
+            local sounds = config939.clawhitting_sound
+            if #sounds == 0 then return end
+
+            ply:EmitSound(sounds[math.random(#sounds)], nil, nil)
 
             if dot >= attackAngle then
                 local dmg = DamageInfo()
