@@ -200,7 +200,7 @@ function SWEP:Think()
                             v:SetNoDraw(false)
                             local weapon = v:GetActiveWeapon()
 
-                            if weapon then
+                            if weapon and v:Alive() and IsValid( weapon ) then
                                 weapon:SetNoDraw(false)
                             end
 
@@ -221,7 +221,7 @@ function SWEP:Think()
                             v:SetNoDraw(true)
                             local weapon = v:GetActiveWeapon()
 
-                            if weapon then
+                            if weapon and v:Alive() and IsValid( weapon ) then
                                 weapon:SetNoDraw(true)
                             end
 
