@@ -89,6 +89,7 @@ end
 function SWEP:Initialize()
     self:SetHoldType("normal")
     self.NextSilentUse = 0
+    self:SetupHooks()
 end
 
 function SWEP:Reload()
@@ -169,75 +170,119 @@ hook.Add("HUDPaint", "SCP939_SilentAbilityHUD", function()
 end)
 
 local cdping = 1
-function SWEP:Think()
-    local owner = self:GetOwner()
-    if not IsValid(owner) then return end  -- protection ajoutée
 
-    hook.Add("Think", "SCP939NoDraw", function()
-        local ply = self:GetOwner()
-        if not IsValid(ply) then
-            hook.Remove("Think", "SCP939NoDraw")
-            return
-        end
+function SWEP:SetupHooks()
+    if self.HooksSet then return end
+    self.HooksSet = true
 
-        local wep = ply:GetActiveWeapon()
-        if not IsValid(wep) or not scp939.is_scp_939(ply) then
-            hook.Remove("Think", "SCP939NoDraw")
-            return
-        end
-
-        hook.Add("RenderScreenspaceEffects", "PostProcess939", function()
-            if not IsValid(ply) then
-                hook.Remove("RenderScreenspaceEffects", "PostProcess939")
-                return
-            end
-
-            local wep = ply:GetActiveWeapon()
-            if not IsValid(wep) or not scp939.is_scp_939(ply) then
-                for k, v in pairs(player.GetAll()) do
+    hook.Add("PreDrawOpaqueRenderables", "HidePlayersForSCP939", function()
+        local ply = LocalPlayer()
+        if not IsValid(ply) or not ply:Alive() then 
+            -- Reset pour ne pas bloquer l'affichage quand SCP939 est mort ou autre
+            for _, v in ipairs(player.GetAll()) do
+                if IsValid(v) then
                     v:SetNoDraw(false)
-                    v:SetMaterial("") 
-                    if v:Alive() and IsValid(v:GetActiveWeapon()) then
+                    if IsValid(v:GetActiveWeapon()) then
                         v:GetActiveWeapon():SetNoDraw(false)
                     end
                 end
-                hook.Remove("RenderScreenspaceEffects", "PostProcess939")
-            else
-                DrawColorModify(tab)
-                DrawSobel(0.2)
             end
-        end)
+            return
+        end
 
-        for k, v in pairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
-            if IsValid(v) and v:IsPlayer() and v ~= ply and ply:Alive() and v:Alive() then
+        if not scp939.is_scp_939(ply) then 
+            -- Idem reset si le joueur n'est pas SCP939
+            for _, v in ipairs(player.GetAll()) do
+                if IsValid(v) then
+                    v:SetNoDraw(false)
+                    if IsValid(v:GetActiveWeapon()) then
+                        v:GetActiveWeapon():SetNoDraw(false)
+                    end
+                end
+            end
+            return
+        end
+
+        -- Sinon, cacher les joueurs non révélés et montrer les révélés
+        for _, v in ipairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
+            if IsValid(v) and v:IsPlayer() and v ~= ply and v:Alive() then
                 if scp939.shouldrevealplayer(ply, v) then
                     v:SetNoDraw(false)
-                    local weapon = v:GetActiveWeapon()
-                    if IsValid(weapon) and v:Alive() then
-                        weapon:SetNoDraw(false)
-                    end
-                    v:SetMaterial('vision/living')
-
-                    if config939.scp939_visualping and SERVER then
-                        if not self.NextPing or CurTime() > self.NextPing then
-                            self.NextPing = CurTime() + cdping
-                            net.Start("scp939_sound_ping")
-                            net.WriteVector(v:GetShootPos() + Vector(0, 0, -5))
-                            net.Send(ply)
-                        end
+                    if IsValid(v:GetActiveWeapon()) then
+                        v:GetActiveWeapon():SetNoDraw(false)
                     end
                 else
                     v:SetNoDraw(true)
-                    local weapon = v:GetActiveWeapon()
-                    if IsValid(weapon) and v:Alive() then
-                        weapon:SetNoDraw(true)
+                    if IsValid(v:GetActiveWeapon()) then
+                        v:GetActiveWeapon():SetNoDraw(true)
                     end
-                    v:SetMaterial("")
                 end
             end
         end
     end)
+
+    hook.Add("PostDrawTranslucentRenderables", "DrawPlayersSCP939", function()
+        local ply = LocalPlayer()
+        if not IsValid(ply) or not ply:Alive() then return end
+        if not scp939.is_scp_939(ply) then return end
+
+        local overrideMat = Material("vision/living")
+
+        cam.IgnoreZ(true)
+        render.SetColorModulation(1, 1, 1)
+        render.MaterialOverride(overrideMat)
+
+        for _, v in ipairs(ents.FindInSphere(ply:GetPos(), config939.range_detection)) do
+            if IsValid(v) and v:IsPlayer() and v ~= ply and v:Alive() then
+                if scp939.shouldrevealplayer(ply, v) then
+                    pcall(function()
+                        v:DrawModel()
+                    end)
+                end
+            end
+        end
+
+        render.MaterialOverride(nil)
+        render.SetColorModulation(1, 1, 1)
+        cam.IgnoreZ(false)
+    end)
+
+    hook.Add("RenderScreenspaceEffects", "SCP939Effects", function()
+        local ply = LocalPlayer()
+        if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
+
+        DrawColorModify(tab)
+        DrawSobel(0.25)
+    end)
 end
+
+function SWEP:RemoveHooks()
+    if not self.HooksSet then return end
+    self.HooksSet = false
+
+    hook.Remove("PreDrawOpaqueRenderables", "HidePlayersForSCP939")
+    hook.Remove("PostDrawTranslucentRenderables", "DrawPlayersSCP939")
+    hook.Remove("RenderScreenspaceEffects", "SCP939Effects")
+
+    for _, v in ipairs(player.GetAll()) do
+        if IsValid(v) then
+            v:SetNoDraw(false)
+            if IsValid(v:GetActiveWeapon()) then
+                v:GetActiveWeapon():SetNoDraw(false)
+            end
+            v:SetMaterial("")
+        end
+    end
+end
+
+function SWEP:Equip()
+    self:SetupHooks()
+end
+
+function SWEP:OnRemove()
+    self:RemoveHooks()
+end
+
 
 
 if CLIENT then
