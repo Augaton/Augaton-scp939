@@ -6,6 +6,8 @@ local scp939 = guthscp.modules.scp939
 local config939 = guthscp.configs.scp939
 scp939 = scp939 or {}
 
+SWEP.GuthSCPLVL = 0
+
 function SWEP:Deploy() self:SetHoldType( "normal" ) end
 
 function SWEP:PrimaryAttack()
@@ -46,4 +48,10 @@ function SWEP:PrimaryAttack()
             end
         end
     end
+end
+
+function SWEP:Think()
+
+	self.GuthSCPLVL = config939.keycard_level or 0
+
 end
