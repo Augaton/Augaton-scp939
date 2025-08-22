@@ -283,8 +283,6 @@ function SWEP:OnRemove()
     self:RemoveHooks()
 end
 
-
-
 if CLIENT then
     guthscp.spawnmenu.add_weapon(SWEP, "SCP-939 SWEP")
 end
