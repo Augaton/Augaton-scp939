@@ -1,4 +1,10 @@
 AddCSLuaFile()
+
+if not guthscp then
+	error( "guthscp939 - fatal error! https://github.com/Guthen/guthscpbase must be installed on the server!" )
+	return
+end
+
 if not scp939 then scp939 = {} end
 local scp939 = guthscp.modules.scp939
 local config939 = guthscp.configs.scp939
@@ -283,6 +289,6 @@ function SWEP:OnRemove()
     self:RemoveHooks()
 end
 
-if CLIENT then
+if CLIENT and guthscp then
     guthscp.spawnmenu.add_weapon(SWEP, "SCP-939 SWEP")
 end
