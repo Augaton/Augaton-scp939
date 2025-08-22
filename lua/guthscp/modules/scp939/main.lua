@@ -12,6 +12,7 @@ local MODULE = {
 	requires = {
 	 	["server.lua"] = guthscp.REALMS.SERVER,
 		["shared.lua"] = guthscp.REALMS.SHARED,
+		["client.lua"] = guthscp.REALMS.CLIENT,
 	},
 }
 
