@@ -182,7 +182,7 @@ MODULE.menu = {
 }
 
 function MODULE:init()
-    MODULE:info("The SCP 939 has been loaded !")
+    MODULE:info("The SCP 939 system has been loaded !")
 end
 
 guthscp.module.hot_reload( "scp939" )
