@@ -1,7 +1,7 @@
 local MODULE = {
 	name = "SCP-939",
 	author = "Augaton",
-	version = "1.2.0",
+	version = "1.2.1",
 	description = [[SCP 939, the SCP that's need sound to do a disaster !]],
 	icon = "icon16/sound_mute.png",
 	version_url = "https://raw.githubusercontent.com/Augaton/guthscp939/refs/heads/main/lua/guthscp/modules/scp939/main.lua",
