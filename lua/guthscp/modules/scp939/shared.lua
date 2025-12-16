@@ -62,13 +62,12 @@ if SERVER then
 end
 
 hook.Add("HUDPaint", "SCP939_VisualPing", function()
-    if not config939.scp939_visualping then return end
+    if not config939.scp939_visualping then return end 
 
     local ply = LocalPlayer()
     if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
 
     local eyePos = ply:EyePos()
-    local eyeAngles = ply:EyeAngles()
 
     for i = #pings, 1, -1 do
         local ping = pings[i]
@@ -77,17 +76,23 @@ hook.Add("HUDPaint", "SCP939_VisualPing", function()
         if delta > ping.duration then
             table.remove(pings, i)
         else
-            local dir = (ping.pos - eyePos):GetNormalized()
-            local angleToPing = eyeAngles:Forward():Dot(dir)
-            local screenPos = ping.pos:ToScreen()
+            local tr = util.TraceLine({
+                start = eyePos,
+                endpos = ping.pos,
+                filter = ply,
+                mask = MASK_OPAQUE 
+            })
 
-            local t = delta / ping.duration
-            local radius = Lerp(t, 0, 70)
-            local alpha = Lerp(1 - t, 255, 0)
+            if tr.Fraction < 1 then
+                local screenPos = ping.pos:ToScreen()
+                local t = delta / ping.duration
+                local radius = Lerp(t, 0, 70)
+                local alpha = Lerp(1 - t, 255, 0)
 
-            surface.SetDrawColor(255, 50, 50, alpha)
-            draw.NoTexture()
-            surface.DrawCircle(screenPos.x, screenPos.y, radius, 255, 50, 50)
+                surface.SetDrawColor(255, 50, 50, alpha)
+                draw.NoTexture()
+                surface.DrawCircle(screenPos.x, screenPos.y, radius, 255, 50, 50)
+            end
         end
     end
 end)
