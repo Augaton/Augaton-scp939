@@ -100,7 +100,14 @@ function scp939.shouldrevealplayer(ply, target)
     if not IsValid(ply:GetActiveWeapon()) then return false end
     if not scp939 or not scp939.is_scp_939 or not scp939.is_scp_939(ply) then return false end
 
-    return (target:GetVelocity():Length() > 0 and not target:Crouching()) or target:IsSpeaking() or target.IsAttacker == true
+    -- Movement detection
+    local isMoving = target:GetVelocity():Length() > 10 and not target:Crouching()
+    -- Voice detection
+    local isTalking = target:IsSpeaking()
+    -- Shoot detection ('RemoveAttacker')
+    local hasShot = target.IsAttacker == true
+
+    return isMoving or isTalking or hasShot
 end
 
 net.Receive('PlayerShooting', function()
