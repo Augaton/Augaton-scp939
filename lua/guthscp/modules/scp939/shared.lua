@@ -111,10 +111,11 @@ function scp939.shouldrevealplayer(ply, target)
 end
 
 net.Receive('PlayerShooting', function()
-    entity = net.ReadEntity()
-    if entity.IsAttacker == true then return end
+    local entity = net.ReadEntity() -- Local !!
+    if not IsValid(entity) or entity.IsAttacker == true then return end
+    
     entity.IsAttacker = true
-    timer.Create('RemoveAttacker', 5, 1, function()
-        entity.IsAttacker = false
+    timer.Create('RemoveAttacker_' .. entity:EntIndex(), 5, 1, function()
+        if IsValid(entity) then entity.IsAttacker = false end
     end)
 end)
