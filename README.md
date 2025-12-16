@@ -1,19 +1,58 @@
-# [Augaton] Augaton-SCP939 System
+# [Augaton] SCP-939 System
 
-## Steam Workshop
+## 📦 Steam Workshop
 ![Steam Views](https://img.shields.io/steam/views/3489863065?color=red&style=for-the-badge)
 ![Steam Downloads](https://img.shields.io/steam/downloads/3489863065?color=red&style=for-the-badge)
 ![Steam Favorites](https://img.shields.io/steam/favorites/3489863065?color=red&style=for-the-badge)
 
-This addon is available on the Workshop just [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3489863065)!
+🔗 **Workshop Link:**  
+https://steamcommunity.com/sharedfiles/filedetails/?id=3489863065
 
-> [!IMPORTANT]
-> Look for required content in the workshop version of the addon without it, the addon will not work !
+---
 
-## Legal Terms
-This addon is licensed under [Creative Commons Sharealike 3.0](https://creativecommons.org/licenses/by-sa/3.0/) and is based on content of [SCP Foundation](http://scp-wiki.wikidot.com/)
+## 📌 Description
+The **Augaton SCP-939 System** is a Garry’s Mod addon created to provide a complete and immersive system for SCP-939 gameplay.
 
-If you create something derived from this, please credit me (you can also tell me about what you've done).
+It focuses on voice detection, player interaction, and server-friendly performance, making it ideal for SCP Roleplay servers.
 
-## Credit
-huge thank's to Guthen !
+> ⚠️ **IMPORTANT**  
+> This addon requires additional content listed on the Workshop page.  
+> Without the required content, the addon will **not function correctly**.
+
+---
+
+## 🔧 Features
+- 🧬 Dedicated SCP-939 system
+- 🗣️ Voice activity detection and reaction logic (even sound detection in general)
+- 🎯 Designed for SCP Roleplay servers
+- ⚙️ Optimized and server-friendly performance
+- 🔄 Modular and extendable codebase
+- 🧩 Workshop dependency support
+
+---
+
+## 📥 Installation
+1. Subscribe to the addon on the Steam Workshop
+2. Subscribe to **all required content** listed on the Workshop page
+3. Restart your server or game
+4. Configure or integrate the system as needed for your SCP framework
+
+---
+
+## 📜 Legal Terms
+This addon is licensed under the  
+**Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)**  
+https://creativecommons.org/licenses/by-sa/3.0/
+
+This project is based on content from the **SCP Foundation**:  
+http://scp-wiki.wikidot.com/
+
+### Derivative Works
+If you create content derived from this addon:
+- Proper credit is required
+- You may inform me about your project if you wish
+
+---
+
+## ❤️ Credits
+- **Guthen** — huge thanks for the help and contributions!
