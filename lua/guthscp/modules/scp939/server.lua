@@ -13,16 +13,13 @@ hook.Add("PlayerShouldTakeDamage", "scp939:no_damage", function(ply)
     end
 end)
 
-hook.Add( "PlayerDeath", "Playerdeath", function(ply) 
-    net.Start( 'SCP939HUDOFF' )
-    net.Send( ply )
-end)
-
-hook.Add("OnPlayerChangedTeam", "ResetVisibilityOnJobChange", function(ply, oldTeam, newTeam)
-    net.Start( 'SCP939HUDOFF' )
+local function disableSCP939HUD(ply)
+    net.Start('SCP939HUDOFF')
     net.Send(ply)
-end)
+end
 
+hook.Add("PlayerDeath", "Playerdeath", function(ply) disableSCP939HUD(ply) end)
+hook.Add("OnPlayerChangedTeam", "ResetVisibilityOnJobChange", function(ply) disableSCP939HUD(ply) end)
 
 hook.Add('EntityFireBullets', 'PlayerIsShooting', function(entity)
     net.Start('PlayerShooting')
