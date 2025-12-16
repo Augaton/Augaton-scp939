@@ -62,6 +62,8 @@ if SERVER then
 end
 
 hook.Add("HUDPaint", "SCP939_VisualPing", function()
+    if not config939.scp939_visualping then return end
+
     local ply = LocalPlayer()
     if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
 
