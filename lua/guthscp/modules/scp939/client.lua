@@ -9,7 +9,7 @@ net.Receive('SCP939HUDOFF', function()
     hook.Remove("PostDrawTranslucentRenderables", "DrawPlayersSCP939")
 
     for _, v in ipairs(player.GetAll()) do
-        if v ~= LocalPlayer() then
+        if IsValid(v) and v ~= LocalPlayer() then
             if v:GetMaterial() ~= "" then
                 v:SetMaterial("")
             end
