@@ -61,38 +61,49 @@ if SERVER then
     util.AddNetworkString("scp939_sound_ping")
 end
 
+local matCircle = Material("vgui/circle")
+local colorRed = Color(255, 50, 50)
+
 hook.Add("HUDPaint", "SCP939_VisualPing", function()
     if not config939.scp939_visualping then return end 
 
     local ply = LocalPlayer()
     if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
+    if #pings == 0 then return end
 
+    local curTime = CurTime()
     local eyePos = ply:EyePos()
 
     for i = #pings, 1, -1 do
         local ping = pings[i]
-        local delta = CurTime() - ping.time
+        local delta = curTime - ping.time
 
         if delta > ping.duration then
             table.remove(pings, i)
-        else
-            local tr = util.TraceLine({
-                start = eyePos,
-                endpos = ping.pos,
-                filter = ply,
-                mask = MASK_OPAQUE 
-            })
+            continue
+        end
 
-            if tr.Fraction < 1 then
-                local screenPos = ping.pos:ToScreen()
-                local t = delta / ping.duration
-                local radius = Lerp(t, 0, 70)
-                local alpha = Lerp(1 - t, 255, 0)
+        local screenData = ping.pos:ToScreen()
+        if not screenData.visible then continue end
 
-                surface.SetDrawColor(255, 50, 50, alpha)
-                draw.NoTexture()
-                surface.DrawCircle(screenPos.x, screenPos.y, radius, 255, 50, 50)
-            end
+        local tr = util.TraceLine({
+            start = eyePos,
+            endpos = ping.pos,
+            mask = MASK_OPAQUE,
+            filter = ply
+        })
+
+        if tr.Fraction < 0.99 then
+            local t = delta / ping.duration
+            
+            local radius = t * 120 
+            local alpha = (1 - t) * 200 
+
+            surface.SetMaterial(matCircle)
+            surface.SetDrawColor(255, 50, 50, alpha)
+            surface.DrawTexturedRectRotated(screenData.x, screenData.y, radius, radius, 0)
+            
+            surface.DrawTexturedRectRotated(screenData.x, screenData.y, 10, 10, 0)
         end
     end
 end)
