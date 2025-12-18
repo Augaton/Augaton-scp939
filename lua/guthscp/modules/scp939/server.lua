@@ -25,4 +25,8 @@ hook.Add('EntityFireBullets', 'PlayerIsShooting', function(entity)
     net.Start('PlayerShooting')
     net.WriteEntity(entity)
     net.Send(scp939.get_scps_939())
+
+    net.Start("scp939_sound_ping")
+        net.WriteVector(entity:GetPos())
+    net.Send(scp939.get_scps_939())
 end)
