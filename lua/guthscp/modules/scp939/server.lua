@@ -27,24 +27,45 @@ hook.Add('EntityFireBullets', 'PlayerIsShooting', function(entity)
     net.Send(scp939.get_scps_939())
 end)
 
+
 local next_ping_check = 0
-hook.Add("Think", "SCP939_PingGenerator", function()
-    if CurTime() < next_ping_check then return end
-    next_ping_check = CurTime() + 0.5
+local detection_range = config939.range_detection or 2500
+local detection_range_sqr = detection_range * detection_range -- On calcule le carré une seule fois
+
+hook.Add("Think", "SCP939_ServerPingLogic", function()
+    local currentTime = CurTime()
+    if currentTime < next_ping_check then return end
+    next_ping_check = currentTime + 0.5
 
     local scps = scp939.get_scps_939()
     if #scps == 0 then return end
 
-    for _, ply in ipairs(scps) do
-        if not IsValid(ply) or not ply:Alive() then continue end
+    local all_players = player.GetAll()
+    
+    for i = 1, #scps do
+        local scp = scps[i]
+        if not IsValid(scp) or not scp:Alive() then continue end
 
-        for _, target in ipairs(ents.FindInSphere(ply:GetPos(), config939.range_detection or 1000)) do
-            if target:IsPlayer() and scp939.shouldrevealplayer(ply, target) then
-                
-                net.Start("scp939_sound_ping")
-                    net.WriteVector(target:GetPos() + Vector(0, 0, 40)) 
-                net.Send(ply) 
+        local scpPos = scp:GetPos()
+        local players_to_ping = {}
+
+        for j = 1, #all_players do
+            local target = all_players[j]
+            
+            if scp939.shouldrevealplayer(scp, target) then
+                if scpPos:DistToSqr(target:GetPos()) < detection_range_sqr then
+                    table.insert(players_to_ping, target:GetPos() + Vector(0, 0, 40))
+                end
             end
+        end
+
+        if #players_to_ping > 0 then
+            net.Start("scp939_sound_ping")
+            net.WriteUInt(#players_to_ping, 8) 
+            for _, pos in ipairs(players_to_ping) do
+                net.WriteVector(pos)
+            end
+            net.Send(scp)
         end
     end
 end)
