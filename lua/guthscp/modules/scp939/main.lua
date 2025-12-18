@@ -92,7 +92,7 @@ MODULE.menu = {
 				name = "Visual Ping",
 				id = "scp939_visualping",
 				desc = "If checked, SCP-939 can see the person and a red circle that's indicate a 'ping', it's purely visual (expiremental, can provoke freeze)",
-				default = false,
+				default = true,
 			},
 			{
 				type = "Bool",
