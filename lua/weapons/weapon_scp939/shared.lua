@@ -288,5 +288,5 @@ function SWEP:OnRemove()
 end
 
 if CLIENT and guthscp then
-    guthscp.spawnmenu.add_weapon(SWEP, "SCP-939 SWEP")
+    guthscp.spawnmenu.add_weapon(SWEP, "SCPs")
 end
