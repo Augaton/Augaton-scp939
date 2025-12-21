@@ -49,12 +49,15 @@ end)
 local pings = {}
 
 net.Receive("scp939_sound_ping", function()
-    local pos = net.ReadVector()
-    table.insert(pings, {
-        pos = pos,
-        time = CurTime(),
-        duration = 0.5,     
-    })
+    local count = net.ReadUInt(8)
+    for i = 1, count do
+        local position = net.ReadVector()
+        table.insert(pings, {
+            pos = position,
+            time = CurTime(),
+            duration = 1.0, -- Durée d'affichage du point
+        })
+    end
 end)
 
 if SERVER then
@@ -62,17 +65,16 @@ if SERVER then
 end
 
 local matCircle = Material("vgui/circle")
+local ArrowPing = Material("materials/ping/arrow.png")
 local colorRed = Color(255, 50, 50)
 
 hook.Add("HUDPaint", "SCP939_VisualPing", function()
-    if not config939.scp939_visualping then return end 
-
-    local ply = LocalPlayer()
-    if not IsValid(ply) or not scp939.is_scp_939(ply) then return end
+    local lp = LocalPlayer()
+    if not IsValid(lp) or not scp939.is_scp_939(lp) then return end
     if #pings == 0 then return end
 
     local curTime = CurTime()
-    local eyePos = ply:EyePos()
+    local scrW, scrH = ScrW(), ScrH()
 
     for i = #pings, 1, -1 do
         local ping = pings[i]
@@ -83,31 +85,27 @@ hook.Add("HUDPaint", "SCP939_VisualPing", function()
             continue
         end
 
+        -- Calcul de la position écran
         local screenData = ping.pos:ToScreen()
-        if not screenData.visible then continue end
+        
+        -- C'est ici qu'on règle le problème du 0,0 :
+        -- Si screenData.visible est faux, l'entité est derrière le joueur.
+        -- On utilise math.Clamp pour forcer l'affichage sur les bords si hors écran.
+        local x = math.Clamp(screenData.x, 20, scrW - 20)
+        local y = math.Clamp(screenData.y, 20, scrH - 20)
+        
+        local alpha = (1 - (delta / ping.duration)) * 255
+        local size = 20 * (1 - (delta / ping.duration))
 
-        local tr = util.TraceLine({
-            start = eyePos,
-            endpos = ping.pos,
-            mask = MASK_OPAQUE,
-            filter = ply
-        })
-
-        if tr.Fraction < 0.99 then
-            local t = delta / ping.duration
-            
-            local radius = t * 120 
-            local alpha = (1 - t) * 200 
-
-            surface.SetMaterial(matCircle)
-            surface.SetDrawColor(255, 50, 50, alpha)
-            surface.DrawTexturedRectRotated(screenData.x, screenData.y, radius, radius, 0)
-            
-            surface.DrawTexturedRectRotated(screenData.x, screenData.y, 10, 10, 0)
-        end
+        surface.SetMaterial(matCircle)
+        surface.SetDrawColor(255, 50, 50, alpha)
+        surface.DrawTexturedRectRotated(x, y, size + 10, size + 10, 0)
+        
+        -- Optionnel : Afficher la distance
+        local dist = math.Round(lp:GetPos():Distance(ping.pos) * 0.019) .. "m"
+        draw.SimpleTextOutlined(dist, "DermaDefault", x, y + 15, Color(255, 255, 255, alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 1, Color(0, 0, 0, alpha))
     end
 end)
-
 // init 939
 
 function scp939.shouldrevealplayer(ply, target)

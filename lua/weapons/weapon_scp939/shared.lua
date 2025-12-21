@@ -234,7 +234,6 @@ function SWEP:SetupHooks()
 
         local overrideMat = Material("vision/living")
 
-        cam.IgnoreZ(true)
         render.SetColorModulation(1, 1, 1)
         render.MaterialOverride(overrideMat)
 
@@ -250,7 +249,6 @@ function SWEP:SetupHooks()
 
         render.MaterialOverride(nil)
         render.SetColorModulation(1, 1, 1)
-        cam.IgnoreZ(false)
     end)
 
     hook.Add("RenderScreenspaceEffects", "SCP939Effects", function()
